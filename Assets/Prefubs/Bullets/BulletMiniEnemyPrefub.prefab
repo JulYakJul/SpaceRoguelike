@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3364619939552553242}
   - component: {fileID: 7451556532384258515}
   m_Layer: 0
-  m_Name: BulletEnemyPrefub
+  m_Name: BulletMiniEnemyPrefub
   m_TagString: BulletEnemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8cae4f13f4c62804f93fdc3e82a0adb3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cc6656c528acefc4bbfbebaab6e93a7d, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,7 +104,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.03, y: 0.07}
+    oldSize: {x: 0.03, y: 0.03}
     newSize: {x: 0.03, y: 0.07}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

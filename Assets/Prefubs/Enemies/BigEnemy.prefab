@@ -153,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 2
   shootingInterval: 1
-  bulletPrefab: {fileID: 8870080724653636473, guid: 6c278891f815c3a4d8cf6404fa68b24e, type: 3}
+  bulletPrefab: {fileID: 8870080724653636473, guid: 98a8d1a624c945d40806d386b1ef97a5, type: 3}
   bulletSpawnPoints:
   - {fileID: 560270328598871231}
   - {fileID: 8456554427265097003}
