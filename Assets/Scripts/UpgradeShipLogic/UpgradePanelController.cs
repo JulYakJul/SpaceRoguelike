@@ -73,10 +73,10 @@ public class UpgradePanelController : MonoBehaviour
     {
         Color backgroundColor = type switch
         {
-            UpgradeType.Health => new Color(1f, 0f, 0f, 0.4f),
-            UpgradeType.Strength => new Color(0f, 0f, 1f, 0.4f),
-            UpgradeType.Speed => new Color(0f, 1f, 0f, 0.4f),
-            _ => new Color(1f, 1f, 1f, 0.4f),
+            UpgradeType.Health => new Color(1f, 0f, 0f, 0.1f),
+            UpgradeType.Strength => new Color(0f, 0f, 1f, 0.1f),
+            UpgradeType.Speed => new Color(0f, 1f, 0f, 0.1f),
+            _ => new Color(1f, 1f, 1f, 0.1f),
         };
         button.GetComponent<Image>().color = backgroundColor;
     }

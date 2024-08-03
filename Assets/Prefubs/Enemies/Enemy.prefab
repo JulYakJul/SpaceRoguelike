@@ -135,13 +135,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 2
   shootingInterval: 0.5
-  bulletPrefab: {fileID: 8870080724653636473, guid: 6c278891f815c3a4d8cf6404fa68b24e, type: 3}
+  bulletPrefab: {fileID: 8870080724653636473, guid: 7800b851e7cc22e49b5261fc0e346f55, type: 3}
   bulletSpawnPoints:
   - {fileID: 1983265715373863321}
   - {fileID: 1983265717134158880}
   - {fileID: 1983265716222060938}
   visionRadius: 30
   maxHealth: 100
+  maxTransparency: 0.6
 --- !u!61 &1983265716038532691
 BoxCollider2D:
   m_ObjectHideFlags: 0
