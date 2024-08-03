@@ -1277,7 +1277,7 @@ MonoBehaviour:
   m_ShowCameraFrustum: 1
   m_IgnoreTimeScale: 0
   m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 1
+  m_UpdateMethod: 0
   m_BlendUpdateMethod: 0
   m_DefaultBlend:
     m_Style: 1
@@ -1468,7 +1468,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8870080724653636473, guid: 49070572d85be734d9d17e821def474c, type: 3}
   firePoint: {fileID: 832692536}
   fireRate: 10
-  detectionRadius: 9.08
+  detectionRadius: 10
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1961,9 +1961,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minBounds: {x: -100, y: -50}
   maxBounds: {x: 100, y: 50}
-  enemyPrefabs:
+  initialEnemyPrefabs:
   - {fileID: 1983265716038532689, guid: 2f2d597544d788746aa723f5c209b39f, type: 3}
   - {fileID: 560270327968242028, guid: 556a448f74d9ad04981f7203f571f67e, type: 3}
+  secondWaveEnemyPrefabs:
   - {fileID: 560270327968242028, guid: af43a4b343d56074ca4153b6b1330ade, type: 3}
   itemPrefabs:
   - {fileID: 6422446912500690239, guid: 40011299bf833af4391af5bf99023099, type: 3}
@@ -1973,6 +1974,7 @@ MonoBehaviour:
   spawnInterval: 0.1
   maxEnemies: 20
   maxItems: 30
+  waveDuration: 60
 --- !u!1 &1325298971
 GameObject:
   m_ObjectHideFlags: 0

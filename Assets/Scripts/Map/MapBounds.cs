@@ -8,12 +8,14 @@ public class MapBounds : MonoBehaviour
     public Vector2 maxBounds;
 
     [Header("Spawn Settings")]
-    [SerializeField] private GameObject[] enemyPrefabs;
+    [SerializeField] private GameObject[] initialEnemyPrefabs;
+    [SerializeField] private GameObject[] secondWaveEnemyPrefabs;
     [SerializeField] private GameObject[] itemPrefabs;
     [SerializeField] private Minimap minimap;
     [SerializeField] private float spawnInterval;
     [SerializeField] private int maxEnemies;
     [SerializeField] private int maxItems;
+    [SerializeField] private float waveDuration;
 
     private int currentEnemies;
     private int currentItems;
@@ -25,18 +27,40 @@ public class MapBounds : MonoBehaviour
 
     private IEnumerator SpawnObjectsCoroutine()
     {
+        GameObject[][] waves = new GameObject[][]
+        {
+            initialEnemyPrefabs,
+            secondWaveEnemyPrefabs
+        };
+
         while (true)
         {
-            SpawnEnemy();
-            SpawnItem();
-            yield return new WaitForSeconds(spawnInterval);
+            foreach (var wave in waves)
+            {
+                SpawnWave(wave);
+                yield return new WaitForSeconds(waveDuration);
+            }
         }
     }
 
-    private void SpawnEnemy()
+    private void SpawnWave(GameObject[] enemyPrefabs)
     {
-        if (currentEnemies >= maxEnemies) return;
+        currentEnemies = 0;
+        for (int i = 0; i < maxEnemies; i++)
+        {
+            SpawnEnemy(enemyPrefabs);
+        }
 
+        currentItems = 0;
+
+        for (int i = 0; i < maxItems; i++)
+        {
+            SpawnItem();
+        }
+    }
+
+    private void SpawnEnemy(GameObject[] enemyPrefabs)
+    {
         Vector2 spawnPosition = GetRandomPositionWithinBounds();
         int randomIndex = Random.Range(0, enemyPrefabs.Length);
         GameObject enemy = Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
@@ -46,8 +70,6 @@ public class MapBounds : MonoBehaviour
 
     private void SpawnItem()
     {
-        if (currentItems >= maxItems) return;
-
         Vector2 spawnPosition = GetRandomPositionWithinBounds();
         int randomIndex = Random.Range(0, itemPrefabs.Length);
         GameObject item = Instantiate(itemPrefabs[randomIndex], spawnPosition, Quaternion.identity);
