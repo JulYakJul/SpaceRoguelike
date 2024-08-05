@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3364619939552553242}
   - component: {fileID: 7451556532384258515}
   m_Layer: 0
-  m_Name: BulletPlayerPrefub
+  m_Name: BulletLongPlayerPrefub
   m_TagString: BulletPlayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7e7824b2874882044bff48ce8f109f9c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8cae4f13f4c62804f93fdc3e82a0adb3, type: 3}
   m_Color: {r: 0.20911956, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,7 +104,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.03, y: 0.03}
+    oldSize: {x: 0.03, y: 0.07}
     newSize: {x: 0.03, y: 0.07}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -146,6 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c588e8b98406ddc419000e263ddd9857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 7
   lifetime: 5
   damage: 30
