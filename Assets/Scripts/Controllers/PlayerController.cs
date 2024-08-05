@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float fireRate;
     [SerializeField] private float detectionRadius;
     [SerializeField] private LayerMask enemyLayer;
+    private int nextFirePointIndex = 1;
 
     [Header("Map Settings")]
     [SerializeField] private MapBounds mapBounds;
@@ -40,6 +42,10 @@ public class PlayerController : MonoBehaviour
     public GameObject UpgradePanel => upgradePanel;
     public bool IsUpgradePanelActive { get; set; } = false;
 
+    [Header("Cinemachine Settings")]
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private float cameraZoomSpeed = 2f;
+
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private float nextFireTime;
@@ -48,7 +54,7 @@ public class PlayerController : MonoBehaviour
     private int currentBulletIndex = 0;
     private GameObject bulletPrefab;
 
-    private const float SpeedMultiplier = 2f;
+    private const float SpeedMultiplier = 1f;
     private const float StrengthMultiplier = 3f;
 
     void Start()
@@ -56,6 +62,11 @@ public class PlayerController : MonoBehaviour
         InitializeComponents();
         InitializePlayerSettings();
         UpdateUI();
+
+        if (firePoints.Length > 0)
+        {
+            firePoints[0].gameObject.SetActive(true);
+        }
 
         StartCoroutine(ShowUpgradePanelCoroutine());
     }
@@ -209,25 +220,15 @@ public class PlayerController : MonoBehaviour
 
     public void UpgradeWeapon()
     {
-        int activeFirePoints = 0;
-        for (int i = 0; i < firePoints.Length; i++)
+        if (nextFirePointIndex < firePoints.Length)
         {
-            if (firePoints[i].gameObject.activeSelf)
+            if (!firePoints[nextFirePointIndex].gameObject.activeSelf)
             {
-                activeFirePoints++;
+                firePoints[nextFirePointIndex].gameObject.SetActive(true);
+                Debug.Log($"Activated Fire Point {nextFirePointIndex + 1}");
             }
-        }
 
-        if (activeFirePoints < 2 && firePoints.Length > 1)
-        {
-            firePoints[1].gameObject.SetActive(true);
-            Debug.Log("Activated Fire Point 2");
-        }
-
-        if (activeFirePoints < 3 && firePoints.Length > 2)
-        {
-            firePoints[2].gameObject.SetActive(true);
-            Debug.Log("Activated Fire Point 3");
+            nextFirePointIndex++;
         }
     }
 
@@ -242,6 +243,29 @@ public class PlayerController : MonoBehaviour
         maxHealth += amount;
         healthSlider.maxValue = maxHealth;
         UpdateHealthText();
+    }
+
+    public void UpgradeFireRate(int amount)
+    {
+        fireRate += amount;
+    }
+
+    public void UpgradeDetectionRadius(int amount)
+    {
+        detectionRadius += amount;
+
+        if (virtualCamera != null)
+        {
+            var currentSize = virtualCamera.m_Lens.OrthographicSize;
+            var targetSize = currentSize + amount;
+            StartCoroutine(SmoothCameraZoom(currentSize, targetSize));
+        }
+    }
+
+    public void UpgradeStrengthScale(int amount)
+    {
+        maxStrength += amount;
+        UpdateStrengthText();
     }
 
     public void IncreaseHealth(int amount)
@@ -267,11 +291,25 @@ public class PlayerController : MonoBehaviour
         bulletPrefab = bulletPrefabs[currentBulletIndex];
     }
 
+    private IEnumerator SmoothCameraZoom(float startSize, float endSize)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < cameraZoomSpeed)
+        {
+            virtualCamera.m_Lens.OrthographicSize = Mathf.Lerp(startSize, endSize, elapsedTime / cameraZoomSpeed);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        virtualCamera.m_Lens.OrthographicSize = endSize;
+    }
+
     private IEnumerator ShowUpgradePanelCoroutine()
     {
         while (true)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(2f);
             if (!IsUpgradePanelActive) 
             {
                 upgradePanel.SetActive(true);

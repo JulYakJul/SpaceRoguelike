@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3364619939552553242}
   - component: {fileID: 7451556532384258515}
   m_Layer: 0
-  m_Name: BulletBananaPlayerPrefub 3
+  m_Name: BulletBigPlayerPrefub
   m_TagString: BulletPlayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e59b1659adeb9204f95001966c3d0b33, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5a4bdef885afa8e4db92057d040d540c, type: 3}
   m_Color: {r: 0.20911956, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,14 +104,14 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.09, y: 0.04}
+    oldSize: {x: 0.05, y: 0.05}
     newSize: {x: 0.03, y: 0.07}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.009688232, y: 0.010314253}
+  m_Size: {x: 0.050344255, y: 0.051527124}
   m_EdgeRadius: 0
 --- !u!50 &3364619939552553242
 Rigidbody2D:
@@ -146,6 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c588e8b98406ddc419000e263ddd9857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7
+  speed: 11
   lifetime: 5
-  damage: 15
+  damage: 30
