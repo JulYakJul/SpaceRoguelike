@@ -142,7 +142,7 @@ MonoBehaviour:
   - {fileID: 1983265716222060938}
   visionRadius: 30
   maxHealth: 100
-  maxTransparency: 0.6
+  maxTransparency: 0.8
 --- !u!61 &1983265716038532691
 BoxCollider2D:
   m_ObjectHideFlags: 0

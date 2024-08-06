@@ -54,7 +54,6 @@ public class PlayerController : MonoBehaviour
     private int currentBulletIndex = 0;
     private GameObject bulletPrefab;
 
-    private const float SpeedMultiplier = 1f;
     private const float StrengthMultiplier = 3f;
 
     void Start()
@@ -186,7 +185,9 @@ public class PlayerController : MonoBehaviour
     {
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);
         healthSlider.value = currentHealth;
+
         UpdateHealthText();
+        AdjustSpeedOnDamage();
 
         if (currentHealth <= 0)
         {
@@ -194,13 +195,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void UpgradeStat(ref int stat, int maxStat, System.Action updateText, System.Action additionalAction = null)
+    private void AdjustSpeedOnDamage()
     {
-        if (stat < maxStat)
+        if (speed > 7)
         {
-            stat++;
-            updateText?.Invoke();
-            additionalAction?.Invoke();
+            playerSpeed--;
+            speed = Mathf.Max(baseSpeed + (playerSpeed - 1), 7);
+            UpdateSpeedText();
         }
     }
 
@@ -214,7 +215,7 @@ public class PlayerController : MonoBehaviour
     public void UpgradeSpeed(int amount)
     {
         playerSpeed = Mathf.Clamp(playerSpeed + amount, 0, maxSpeed);
-        speed = baseSpeed + (playerSpeed - 1) * SpeedMultiplier;
+        speed = baseSpeed + (playerSpeed - 1);
         UpdateSpeedText();
     }
 
@@ -225,7 +226,6 @@ public class PlayerController : MonoBehaviour
             if (!firePoints[nextFirePointIndex].gameObject.activeSelf)
             {
                 firePoints[nextFirePointIndex].gameObject.SetActive(true);
-                Debug.Log($"Activated Fire Point {nextFirePointIndex + 1}");
             }
 
             nextFirePointIndex++;
@@ -309,7 +309,7 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(30f);
             if (!IsUpgradePanelActive) 
             {
                 upgradePanel.SetActive(true);

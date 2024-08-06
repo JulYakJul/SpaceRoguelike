@@ -23,23 +23,11 @@ public class MapBounds : MonoBehaviour
 
     [SerializeField] private float[] itemWeights;
 
-    public PlayerController Player;
-
     private bool hasReachedMaxSpeed;
 
     private void Start()
     {
         StartCoroutine(SpawnObjectsCoroutine());
-    }
-
-    private void Update()
-    {
-        if (!hasReachedMaxSpeed && Player.playerSpeed == Player.maxSpeed)
-        {
-            hasReachedMaxSpeed = true;
-            StopSpawningCertainItems();
-            DestroyAllCertainItems();
-        }
     }
 
     private IEnumerator SpawnObjectsCoroutine()
@@ -133,26 +121,5 @@ public class MapBounds : MonoBehaviour
         }
 
         return weights.Length - 1;
-    }
-
-    private void StopSpawningCertainItems()
-    {
-        itemWeights[1] = 0;
-        itemWeights[2] = 0;
-    }
-
-    private void DestroyAllCertainItems()
-    {
-        GameObject[] itemsToDestroy = GameObject.FindGameObjectsWithTag("PowerSpeed");
-        foreach (GameObject item in itemsToDestroy)
-        {
-            Destroy(item);
-        }
-
-        itemsToDestroy = GameObject.FindGameObjectsWithTag("HealthSpeed");
-        foreach (GameObject item in itemsToDestroy)
-        {
-            Destroy(item);
-        }
     }
 }
