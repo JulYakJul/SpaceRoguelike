@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6422446912500690224}
   m_Layer: 0
   m_Name: HealthPower
-  m_TagString: Untagged
+  m_TagString: HealthPower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

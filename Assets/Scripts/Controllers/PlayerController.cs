@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text strengthText;
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private int maxStrength;
-    [SerializeField] private int maxSpeed;
+    public int maxSpeed;
     public float speed;
     public int strength;
     public int playerSpeed;
