@@ -6,6 +6,9 @@ TagManager:
   tags:
   - BulletPlayer
   - BulletEnemy
+  - HealthPower
+  - HealthSpeed
+  - PowerSpeed
   layers:
   - Default
   - TransparentFX

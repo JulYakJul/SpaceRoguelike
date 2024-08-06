@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class MapBounds : MonoBehaviour
 {
@@ -20,9 +21,25 @@ public class MapBounds : MonoBehaviour
     private int currentEnemies;
     private int currentItems;
 
+    [SerializeField] private float[] itemWeights;
+
+    public PlayerController Player;
+
+    private bool hasReachedMaxSpeed;
+
     private void Start()
     {
         StartCoroutine(SpawnObjectsCoroutine());
+    }
+
+    private void Update()
+    {
+        if (!hasReachedMaxSpeed && Player.playerSpeed == Player.maxSpeed)
+        {
+            hasReachedMaxSpeed = true;
+            StopSpawningCertainItems();
+            DestroyAllCertainItems();
+        }
     }
 
     private IEnumerator SpawnObjectsCoroutine()
@@ -71,7 +88,13 @@ public class MapBounds : MonoBehaviour
     private void SpawnItem()
     {
         Vector2 spawnPosition = GetRandomPositionWithinBounds();
-        int randomIndex = Random.Range(0, itemPrefabs.Length);
+        int randomIndex = GetWeightedRandomIndex(itemWeights);
+        
+        if (hasReachedMaxSpeed && (randomIndex == 1 || randomIndex == 2))
+        {
+            return;
+        }
+
         GameObject item = Instantiate(itemPrefabs[randomIndex], spawnPosition, Quaternion.identity);
         minimap.AddObject(item, randomIndex);
         currentItems++;
@@ -92,5 +115,44 @@ public class MapBounds : MonoBehaviour
     public void OnItemDestroyed()
     {
         currentItems = Mathf.Max(currentItems - 1, 0);
+    }
+
+    private int GetWeightedRandomIndex(float[] weights)
+    {
+        float totalWeight = weights.Sum();
+        float randomValue = Random.Range(0, totalWeight);
+        float cumulativeWeight = 0f;
+
+        for (int i = 0; i < weights.Length; i++)
+        {
+            cumulativeWeight += weights[i];
+            if (randomValue < cumulativeWeight)
+            {
+                return i;
+            }
+        }
+
+        return weights.Length - 1;
+    }
+
+    private void StopSpawningCertainItems()
+    {
+        itemWeights[1] = 0;
+        itemWeights[2] = 0;
+    }
+
+    private void DestroyAllCertainItems()
+    {
+        GameObject[] itemsToDestroy = GameObject.FindGameObjectsWithTag("PowerSpeed");
+        foreach (GameObject item in itemsToDestroy)
+        {
+            Destroy(item);
+        }
+
+        itemsToDestroy = GameObject.FindGameObjectsWithTag("HealthSpeed");
+        foreach (GameObject item in itemsToDestroy)
+        {
+            Destroy(item);
+        }
     }
 }

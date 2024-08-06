@@ -161,7 +161,7 @@ MonoBehaviour:
   - {fileID: 2407435587518089108}
   - {fileID: 1003815421895378914}
   visionRadius: 30
-  maxHealth: 100
+  maxHealth: 500
   maxTransparency: 0
 --- !u!1 &560270328598871230
 GameObject:
