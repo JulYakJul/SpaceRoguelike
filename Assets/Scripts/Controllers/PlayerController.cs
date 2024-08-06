@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
+using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,33 +15,46 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int maxHealth;
     [SerializeField] private Slider healthSlider;
     [SerializeField] private TMP_Text healthText;
+    public int currentHealth;
 
     [Header("Stats Settings")]
     [SerializeField] private TMP_Text strengthText;
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private int maxStrength;
-    [SerializeField] private int maxSpeed;
+    public int maxSpeed;
+    public float speed;
+    public int strength;
+    public int playerSpeed;
 
     [Header("Combat Settings")]
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform firePoint;
+    [SerializeField] private GameObject[] bulletPrefabs;
+    [SerializeField] private Transform[] firePoints;
     [SerializeField] private float fireRate;
     [SerializeField] private float detectionRadius;
     [SerializeField] private LayerMask enemyLayer;
+    private int nextFirePointIndex = 1;
 
     [Header("Map Settings")]
     [SerializeField] private MapBounds mapBounds;
 
+    [Header("Upgrade Panel")]
+    [SerializeField] private GameObject upgradePanel;
+    public GameObject UpgradePanel => upgradePanel;
+    public bool IsUpgradePanelActive { get; set; } = false;
+
+    [Header("Cinemachine Settings")]
+    [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private float cameraZoomSpeed = 2f;
+
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
-    private float speed;
-    private int currentHealth;
-    private int strength;
-    private int playerSpeed;
     private float nextFireTime;
     private Vector2 movement;
 
-    private const float SpeedMultiplier = 2f;
+    private int currentBulletIndex = 0;
+    private GameObject bulletPrefab;
+
+    private const float SpeedMultiplier = 1f;
     private const float StrengthMultiplier = 3f;
 
     void Start()
@@ -47,6 +62,13 @@ public class PlayerController : MonoBehaviour
         InitializeComponents();
         InitializePlayerSettings();
         UpdateUI();
+
+        if (firePoints.Length > 0)
+        {
+            firePoints[0].gameObject.SetActive(true);
+        }
+
+        StartCoroutine(ShowUpgradePanelCoroutine());
     }
 
     void Update()
@@ -74,7 +96,45 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
+
+        if (bulletPrefabs == null || bulletPrefabs.Length == 0)
+        {
+            Debug.LogError("Bullet Prefabs array is not initialized or is empty.");
+            return;
+        }
+
+        if (firePoints == null || firePoints.Length == 0)
+        {
+            Debug.LogError("Fire Points array is not initialized or is empty.");
+            return;
+        }
+
+        foreach (var firePoint in firePoints)
+        {
+            firePoint.gameObject.SetActive(false);
+        }
+
+        if (firePoints.Length > 0)
+        {
+            firePoints[0].gameObject.SetActive(true);
+        }
+
+        if (currentBulletIndex < 0 || currentBulletIndex >= bulletPrefabs.Length)
+        {
+            currentBulletIndex = 0;
+        }
+
+        UpdateBulletPrefab();
     }
+
+    private void OnUpgradeSelected(System.Action upgradeAction)
+    {
+        upgradeAction?.Invoke();
+        upgradePanel.SetActive(false);
+        Time.timeScale = 1f;
+        IsUpgradePanelActive = false;
+    }
+
 
     private void HandleMovementInput()
     {
@@ -134,24 +194,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void UpgradeStrength()
+    private void UpgradeStat(ref int stat, int maxStat, System.Action updateText, System.Action additionalAction = null)
     {
-        UpgradeStat(ref strength, maxStrength, UpdateStrengthText, UpdateBulletDamage);
-    }
-
-    public void UpgradeSpeed()
-    {
-        UpgradeStat(ref playerSpeed, maxSpeed, UpdateSpeedText, () =>
+        if (stat < maxStat)
         {
-            speed = baseSpeed + (playerSpeed - 1) * SpeedMultiplier;
-        });
-    }
-
-    public void IncreaseHealth(int amount)
-    {
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        healthSlider.value = currentHealth;
-        UpdateHealthText();
+            stat++;
+            updateText?.Invoke();
+            additionalAction?.Invoke();
+        }
     }
 
     public void UpgradeStrength(int amount)
@@ -168,13 +218,107 @@ public class PlayerController : MonoBehaviour
         UpdateSpeedText();
     }
 
-    private void UpgradeStat(ref int stat, int maxStat, System.Action updateText, System.Action additionalAction = null)
+    public void UpgradeWeapon()
     {
-        if (stat < maxStat)
+        if (nextFirePointIndex < firePoints.Length)
         {
-            stat++;
-            updateText?.Invoke();
-            additionalAction?.Invoke();
+            if (!firePoints[nextFirePointIndex].gameObject.activeSelf)
+            {
+                firePoints[nextFirePointIndex].gameObject.SetActive(true);
+                Debug.Log($"Activated Fire Point {nextFirePointIndex + 1}");
+            }
+
+            nextFirePointIndex++;
+        }
+    }
+
+    public void UpgradeBulletType()
+    {
+        currentBulletIndex = Mathf.Clamp(currentBulletIndex + 1, 0, bulletPrefabs.Length - 1);
+        UpdateBulletPrefab();
+    }
+
+    public void IncreasingHealthScale(int amount)
+    {
+        maxHealth += amount;
+        healthSlider.maxValue = maxHealth;
+        UpdateHealthText();
+    }
+
+    public void UpgradeFireRate(int amount)
+    {
+        fireRate += amount;
+    }
+
+    public void UpgradeDetectionRadius(int amount)
+    {
+        detectionRadius += amount;
+
+        if (virtualCamera != null)
+        {
+            var currentSize = virtualCamera.m_Lens.OrthographicSize;
+            var targetSize = currentSize + amount;
+            StartCoroutine(SmoothCameraZoom(currentSize, targetSize));
+        }
+    }
+
+    public void UpgradeStrengthScale(int amount)
+    {
+        maxStrength += amount;
+        UpdateStrengthText();
+    }
+
+    public void IncreaseHealth(int amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        healthSlider.value = currentHealth;
+        UpdateHealthText();
+    }
+
+    private void UpdateBulletPrefab()
+    {
+        if (bulletPrefabs == null || bulletPrefabs.Length == 0)
+        {
+            Debug.LogError("Bullet Prefabs array is empty when trying to update bullet prefab.");
+            return;
+        }
+
+        if (currentBulletIndex < 0 || currentBulletIndex >= bulletPrefabs.Length)
+        {
+            currentBulletIndex = 0;
+        }
+
+        bulletPrefab = bulletPrefabs[currentBulletIndex];
+    }
+
+    private IEnumerator SmoothCameraZoom(float startSize, float endSize)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < cameraZoomSpeed)
+        {
+            virtualCamera.m_Lens.OrthographicSize = Mathf.Lerp(startSize, endSize, elapsedTime / cameraZoomSpeed);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        virtualCamera.m_Lens.OrthographicSize = endSize;
+    }
+
+    private IEnumerator ShowUpgradePanelCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(2f);
+            if (!IsUpgradePanelActive) 
+            {
+                upgradePanel.SetActive(true);
+                Time.timeScale = 0f;
+                IsUpgradePanelActive = true;
+                yield return new WaitUntil(() => !upgradePanel.activeSelf);
+                Time.timeScale = 1f;
+                IsUpgradePanelActive = false;
+            }
         }
     }
 
@@ -243,20 +387,40 @@ public class PlayerController : MonoBehaviour
 
     private void Shoot()
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
-        if (bulletScript != null)
+        if (bulletPrefab != null)
         {
-            bulletScript.damage = 10 + (strength * 5);
+            foreach (var firePoint in firePoints)
+            {
+                if (firePoint.gameObject.activeSelf)
+                {
+                    GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+                    Bullet bulletScript = bullet.GetComponent<Bullet>();
+                    if (bulletScript != null)
+                    {
+                        bulletScript.damage = 10 + (strength * 5);
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("Bullet prefab is not set when trying to shoot.");
         }
     }
 
     private void UpdateBulletDamage()
     {
-        Bullet bulletScript = bulletPrefab.GetComponent<Bullet>();
-        if (bulletScript != null)
+        if (bulletPrefab != null)
         {
-            bulletScript.damage = 5 + (strength * 5);
+            Bullet bulletScript = bulletPrefab.GetComponent<Bullet>();
+            if (bulletScript != null)
+            {
+                bulletScript.damage = 5 + (strength * 5);
+            }
+        }
+        else
+        {
+            Debug.LogError("Bullet prefab is not set when trying to update bullet damage.");
         }
     }
 

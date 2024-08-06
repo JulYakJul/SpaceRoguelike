@@ -153,8 +153,8 @@ MonoBehaviour:
   bulletSpawnPoints:
   - {fileID: 560270328598871231}
   visionRadius: 30
-  maxHealth: 100
-  maxTransparency: 0.6
+  maxHealth: 50
+  maxTransparency: 0.75
 --- !u!1 &560270328598871230
 GameObject:
   m_ObjectHideFlags: 0
