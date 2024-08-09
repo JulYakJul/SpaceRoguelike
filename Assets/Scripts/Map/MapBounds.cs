@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 
 public class MapBounds : MonoBehaviour
 {
@@ -17,16 +18,21 @@ public class MapBounds : MonoBehaviour
     [SerializeField] private int maxEnemies;
     [SerializeField] private int maxItems;
     [SerializeField] private float waveDuration;
+    [SerializeField] private float minimumDistanceBetweenItems = 2f;
+    [SerializeField] private float minimumDistanceOfEnemiesFromPlayer = 5f;
 
     private int currentEnemies;
     private int currentItems;
+    private List<GameObject> spawnedItems = new List<GameObject>();
 
     [SerializeField] private float[] itemWeights;
 
     private bool hasReachedMaxSpeed;
+    private GameObject player;
 
     private void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         StartCoroutine(SpawnObjectsCoroutine());
     }
 
@@ -67,6 +73,20 @@ public class MapBounds : MonoBehaviour
     private void SpawnEnemy(GameObject[] enemyPrefabs)
     {
         Vector2 spawnPosition = GetRandomPositionWithinBounds();
+
+        int maxAttempts = 10;
+        int attempts = 0;
+        while (attempts < maxAttempts && !IsPositionFarEnoughFromPlayer(spawnPosition))
+        {
+            spawnPosition = GetRandomPositionWithinBounds();
+            attempts++;
+        }
+
+        if (!IsPositionFarEnoughFromPlayer(spawnPosition))
+        {
+            return;
+        }
+
         int randomIndex = Random.Range(0, enemyPrefabs.Length);
         GameObject enemy = Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
         minimap.AddEnemy(enemy);
@@ -83,9 +103,49 @@ public class MapBounds : MonoBehaviour
             return;
         }
 
+        int maxAttempts = 10;
+        int attempts = 0;
+        while (attempts < maxAttempts && !IsPositionValid(spawnPosition))
+        {
+            spawnPosition = GetRandomPositionWithinBounds();
+            attempts++;
+        }
+
+        if (!IsPositionValid(spawnPosition))
+        {
+            return;
+        }
+
         GameObject item = Instantiate(itemPrefabs[randomIndex], spawnPosition, Quaternion.identity);
         minimap.AddObject(item, randomIndex);
+        spawnedItems.Add(item);
         currentItems++;
+    }
+
+    private bool IsPositionValid(Vector2 position)
+    {
+        foreach (var item in spawnedItems)
+        {
+            if (item != null)
+            {
+                float distance = Vector2.Distance(position, item.transform.position);
+                if (distance < minimumDistanceBetweenItems)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private bool IsPositionFarEnoughFromPlayer(Vector2 position)
+    {
+        if (player != null)
+        {
+            float distance = Vector2.Distance(position, player.transform.position);
+            return distance >= minimumDistanceOfEnemiesFromPlayer;
+        }
+        return true;
     }
 
     private Vector2 GetRandomPositionWithinBounds()
@@ -100,8 +160,12 @@ public class MapBounds : MonoBehaviour
         currentEnemies = Mathf.Max(currentEnemies - 1, 0);
     }
 
-    public void OnItemDestroyed()
+    public void OnItemDestroyed(GameObject item)
     {
+        if (spawnedItems.Contains(item))
+        {
+            spawnedItems.Remove(item);
+        }
         currentItems = Mathf.Max(currentItems - 1, 0);
     }
 

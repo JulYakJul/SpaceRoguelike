@@ -37,14 +37,19 @@ public class PlayerController : MonoBehaviour
     [Header("Map Settings")]
     [SerializeField] private MapBounds mapBounds;
 
-    [Header("Upgrade Panel")]
+    [Header("Upgrade Panels")]
     [SerializeField] private GameObject upgradePanel;
     public GameObject UpgradePanel => upgradePanel;
     public bool IsUpgradePanelActive { get; set; } = false;
+    [SerializeField] private GameObject totalUpgradePanel;
+    public GameObject TotalUpgradePanel => totalUpgradePanel;
 
     [Header("Cinemachine Settings")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private float cameraZoomSpeed = 2f;
+
+    [Header("Particle Settings")]
+    [SerializeField] private ParticleSystem movementParticles;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -75,6 +80,7 @@ public class PlayerController : MonoBehaviour
         HandleMovementInput();
         RotateTowardsMovement();
         DetectAndShootEnemies();
+        HandleMovementParticles();
     }
 
     void FixedUpdate()
@@ -132,6 +138,24 @@ public class PlayerController : MonoBehaviour
         upgradePanel.SetActive(false);
         Time.timeScale = 1f;
         IsUpgradePanelActive = false;
+    }
+
+    private void HandleMovementParticles()
+    {
+        if (movement != Vector2.zero)
+        {
+            if (!movementParticles.isPlaying)
+            {
+                movementParticles.Play();
+            }
+        }
+        else
+        {
+            if (movementParticles.isPlaying)
+            {
+                movementParticles.Stop();
+            }
+        }
     }
 
 

@@ -43,6 +43,8 @@ public class TotalUpgradePanelController : MonoBehaviour
 
     private void Start()
     {
+        gameObject.SetActive(false);
+
         InitializeUpgradePanel();
     }
 
