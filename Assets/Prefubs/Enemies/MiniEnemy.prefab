@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
+  patrolDistance: 50
   shootingInterval: 0.3
   bulletPrefab: {fileID: 8870080724653636473, guid: 6c278891f815c3a4d8cf6404fa68b24e, type: 3}
   bulletSpawnPoints:
@@ -164,10 +165,6 @@ MonoBehaviour:
   - {fileID: 6422446912500690239, guid: 40011299bf833af4391af5bf99023099, type: 3}
   - {fileID: 8817551398461422067, guid: 0a7f6e161ed0d5b4ab228e16d7cd7e0c, type: 3}
   - {fileID: 641612472804447312, guid: 061e7337aa751cf40baa838bca886485, type: 3}
-  patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  patrolWaitTime: 0
 --- !u!1 &560270328598871230
 GameObject:
   m_ObjectHideFlags: 0

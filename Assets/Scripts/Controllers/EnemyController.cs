@@ -21,13 +21,13 @@ public class EnemyController : MonoBehaviour
     [Header("Upgrade Settings")]
     [SerializeField] private GameObject[] upgradePrefabs;
 
-
     private Transform player;
     private MapBoundsAndSpawn mapBounds;
     private SpriteRenderer spriteRenderer;
     private float shootingTimer;
-    
+
     private const float AngleOffset = -90f;
+    private bool movingRight = true;
 
     void Start()
     {
@@ -47,11 +47,7 @@ public class EnemyController : MonoBehaviour
     private void InitializeComponents()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject != null)
-        {
-            player = playerObject.transform;
-        }
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
         mapBounds = FindObjectOfType<MapBoundsAndSpawn>();
     }
 
@@ -59,13 +55,49 @@ public class EnemyController : MonoBehaviour
     {
         currentHealth = maxHealth;
         UpdateTransparency();
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+    }
+
+    private void RotateTowards(Vector2 direction)
+    {
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + AngleOffset));
+    }
+
+    private void MoveTowardsPlayer(Vector2 direction)
+    {
+        transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+    }
+
+    private void MoveSideToSide()
+    {
+        if (movingRight)
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, -90));
+            transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
+
+            if (transform.position.x >= mapBounds.maxBounds.x)
+            {
+                movingRight = false;
+            }
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+            transform.position += new Vector3(-speed * Time.deltaTime, 0, 0);
+
+            if (transform.position.x <= mapBounds.minBounds.x)
+            {
+                movingRight = true;
+            }
+        }
     }
 
     private void UpdateHealthBar()
     {
         if (healthBar != null)
         {
-            healthBar.fillAmount = (float)currentHealth / maxHealth;  // Обновляем fillAmount
+            healthBar.fillAmount = (float)currentHealth / maxHealth;
             UpdateHealthBarColor();
         }
     }
@@ -90,6 +122,7 @@ public class EnemyController : MonoBehaviour
     private void HandleMovementAndShooting()
     {
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
         if (distanceToPlayer <= visionRadius)
         {
             Vector2 direction = (player.position - transform.position).normalized;
@@ -98,17 +131,10 @@ public class EnemyController : MonoBehaviour
             ClampPositionWithinBounds();
             HandleShooting();
         }
-    }
-
-    private void RotateTowards(Vector2 direction)
-    {
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + AngleOffset));
-    }
-
-    private void MoveTowardsPlayer(Vector2 direction)
-    {
-        transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+        else
+        {
+            MoveSideToSide();
+        }
     }
 
     private void ClampPositionWithinBounds()
@@ -161,7 +187,6 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-
     private void UpdateTransparency()
     {
         float healthPercentage = (float)currentHealth / maxHealth;
@@ -169,7 +194,6 @@ public class EnemyController : MonoBehaviour
         Color color = spriteRenderer.color;
         color.a = transparency;
         spriteRenderer.color = color;
-
         UpdateHealthBarColor();
     }
 
