@@ -2514,6 +2514,7 @@ MonoBehaviour:
   strengthSlider: {fileID: 396959269}
   maxStrength: 5
   currentStrength: 0
+  upgradeStrength: 5
   bulletPrefabs:
   - {fileID: 8870080724653636473, guid: 45ec3cef661ef9a4d9e0dcd6540f72ff, type: 3}
   - {fileID: 8870080724653636473, guid: 49070572d85be734d9d17e821def474c, type: 3}
@@ -2533,10 +2534,15 @@ MonoBehaviour:
   mapBounds: {fileID: 1319909291}
   upgradePanel: {fileID: 1767760465}
   totalUpgradePanel: {fileID: 1767760465}
+  ShowPanelUpgradeTime: 30
   virtualCamera: {fileID: 416272261}
   cameraZoomSpeed: 2
   movementParticles: {fileID: 1806747575}
   hitSound: {fileID: 8300000, guid: e6177368fcd8f9a40b3a43b1454fff18, type: 3}
+  invulnerabilityTime: 1
+  invulnerabilityTimer: 0
+  flashSpeed: 5
+  opacityPlayer: 0.4
 --- !u!1 &631899516
 GameObject:
   m_ObjectHideFlags: 0
