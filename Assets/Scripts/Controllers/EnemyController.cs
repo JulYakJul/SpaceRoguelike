@@ -18,8 +18,12 @@ public class EnemyController : MonoBehaviour
     public Color zeroHealthColor = Color.red;
     private int currentHealth;
 
+    [Header("Upgrade Settings")]
+    [SerializeField] private GameObject[] upgradePrefabs;
+
+
     private Transform player;
-    private MapBounds mapBounds;
+    private MapBoundsAndSpawn mapBounds;
     private SpriteRenderer spriteRenderer;
     private float shootingTimer;
     
@@ -48,7 +52,7 @@ public class EnemyController : MonoBehaviour
         {
             player = playerObject.transform;
         }
-        mapBounds = FindObjectOfType<MapBounds>();
+        mapBounds = FindObjectOfType<MapBoundsAndSpawn>();
     }
 
     private void InitializeSettings()
@@ -142,10 +146,21 @@ public class EnemyController : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            DropUpgrade();
             Destroy(gameObject);
         }
         UpdateTransparency();
     }
+
+    private void DropUpgrade()
+    {
+        if (upgradePrefabs.Length > 0)
+        {
+            int randomIndex = Random.Range(0, upgradePrefabs.Length);
+            Instantiate(upgradePrefabs[randomIndex], transform.position, Quaternion.identity);
+        }
+    }
+
 
     private void UpdateTransparency()
     {

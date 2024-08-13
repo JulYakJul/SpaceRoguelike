@@ -17,14 +17,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text healthText;
     public int currentHealth;
 
-    [Header("Stats Settings")]
-    [SerializeField] private TMP_Text strengthText;
+    [Header("Speed Settings")]
     [SerializeField] private TMP_Text speedText;
-    [SerializeField] private int maxStrength;
-    public int maxSpeed;
-    public float speed;
-    public int strength;
+    [SerializeField] private Slider speedSlider;
+    public float currentSpeed;
     public int playerSpeed;
+    public int maxSpeed;
+
+    [Header("Strength Settings")]
+    [SerializeField] private TMP_Text strengthText;
+    [SerializeField] private Slider strengthSlider;
+    [SerializeField] private int maxStrength;
+    public int currentStrength;
+    private const float StrengthMultiplier = 3f;
 
     [Header("Combat Settings")]
     [SerializeField] private GameObject[] bulletPrefabs;
@@ -35,7 +40,7 @@ public class PlayerController : MonoBehaviour
     private int nextFirePointIndex = 1;
 
     [Header("Map Settings")]
-    [SerializeField] private MapBounds mapBounds;
+    [SerializeField] private MapBoundsAndSpawn mapBounds;
 
     [Header("Upgrade Panels")]
     [SerializeField] private GameObject upgradePanel;
@@ -46,10 +51,14 @@ public class PlayerController : MonoBehaviour
 
     [Header("Cinemachine Settings")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
-    [SerializeField] private float cameraZoomSpeed = 2f;
+    [SerializeField] private float cameraZoomSpeed;
 
     [Header("Particle Settings")]
     [SerializeField] private ParticleSystem movementParticles;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip hitSound;
+    private AudioSource audioSource;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -58,8 +67,6 @@ public class PlayerController : MonoBehaviour
 
     private int currentBulletIndex = 0;
     private GameObject bulletPrefab;
-
-    private const float StrengthMultiplier = 3f;
 
     void Start()
     {
@@ -93,14 +100,21 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void InitializePlayerSettings()
     {
-        speed = baseSpeed;
+        currentSpeed = baseSpeed;
         currentHealth = maxHealth;
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
+
+        strengthSlider.maxValue = maxStrength;
+        strengthSlider.value = currentStrength;
+
+        speedSlider.maxValue = maxSpeed;
+        speedSlider.value = playerSpeed;
 
         if (bulletPrefabs == null || bulletPrefabs.Length == 0)
         {
@@ -158,7 +172,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void HandleMovementInput()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
@@ -179,7 +192,7 @@ public class PlayerController : MonoBehaviour
     {
         if (movement != Vector2.zero)
         {
-            rb.velocity = movement * speed;
+            rb.velocity = movement * currentSpeed;
         }
         else
         {
@@ -200,15 +213,24 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.CompareTag("BulletEnemy"))
         {
-            TakeDamage(5);
+            Bullet bullet = collision.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                TakeDamage(bullet.damage);
+            }
             Destroy(collision.gameObject);
         }
     }
 
-    private void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);
         healthSlider.value = currentHealth;
+
+        if (hitSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(hitSound);
+        }
 
         UpdateHealthText();
         AdjustSpeedOnDamage();
@@ -221,26 +243,29 @@ public class PlayerController : MonoBehaviour
 
     private void AdjustSpeedOnDamage()
     {
-        if (speed > 7)
+        if (currentSpeed > 7)
         {
             playerSpeed--;
-            speed = Mathf.Max(baseSpeed + (playerSpeed - 1), 7);
+            currentSpeed = Mathf.Max(baseSpeed + (playerSpeed - 1), 7);
             UpdateSpeedText();
+            UpdateSpeedSlider();
         }
     }
 
     public void UpgradeStrength(int amount)
     {
-        strength = Mathf.Clamp(strength + amount, 0, maxStrength);
+        currentStrength = Mathf.Clamp(currentStrength + amount, 0, maxStrength);
         UpdateStrengthText();
+        UpdateStrengthSlider();
         UpdateBulletDamage();
     }
 
     public void UpgradeSpeed(int amount)
     {
         playerSpeed = Mathf.Clamp(playerSpeed + amount, 0, maxSpeed);
-        speed = baseSpeed + (playerSpeed - 1);
+        currentSpeed = baseSpeed + (playerSpeed - 1);
         UpdateSpeedText();
+        UpdateSpeedSlider();
     }
 
     public void UpgradeWeapon()
@@ -266,6 +291,7 @@ public class PlayerController : MonoBehaviour
     {
         maxHealth += amount;
         healthSlider.maxValue = maxHealth;
+        healthSlider.value = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthText();
     }
 
@@ -289,6 +315,8 @@ public class PlayerController : MonoBehaviour
     public void UpgradeStrengthScale(int amount)
     {
         maxStrength += amount;
+        strengthSlider.maxValue = maxStrength;
+        strengthSlider.value = Mathf.Clamp(currentStrength, 0, maxStrength);
         UpdateStrengthText();
     }
 
@@ -351,6 +379,8 @@ public class PlayerController : MonoBehaviour
         UpdateHealthText();
         UpdateStrengthText();
         UpdateSpeedText();
+        UpdateStrengthSlider();
+        UpdateSpeedSlider();
     }
 
     private void UpdateHealthText()
@@ -360,12 +390,22 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateStrengthText()
     {
-        strengthText.text = $"{strength}/{maxStrength}";
+        strengthText.text = $"{currentStrength}/{maxStrength}";
     }
 
     private void UpdateSpeedText()
     {
         speedText.text = $"{playerSpeed}/{maxSpeed}";
+    }
+
+    private void UpdateStrengthSlider()
+    {
+        strengthSlider.value = Mathf.Clamp(currentStrength, 0, strengthSlider.maxValue);
+    }
+
+    private void UpdateSpeedSlider()
+    {
+        speedSlider.value = playerSpeed;
     }
 
     private void DetectAndShootEnemies()
@@ -421,7 +461,7 @@ public class PlayerController : MonoBehaviour
                     Bullet bulletScript = bullet.GetComponent<Bullet>();
                     if (bulletScript != null)
                     {
-                        bulletScript.damage = 10 + (strength * 5);
+                        bulletScript.damage = 10 + (currentStrength * 5);
                     }
                 }
             }
@@ -439,18 +479,12 @@ public class PlayerController : MonoBehaviour
             Bullet bulletScript = bulletPrefab.GetComponent<Bullet>();
             if (bulletScript != null)
             {
-                bulletScript.damage = 5 + (strength * 5);
+                bulletScript.damage = 5 + (currentStrength * 5);
             }
         }
         else
         {
             Debug.LogError("Bullet prefab is not set when trying to update bullet damage.");
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }

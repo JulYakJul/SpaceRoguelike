@@ -15,10 +15,18 @@ public class UpgradeItem : MonoBehaviour
         value1 = GenerateRandomValue(type1);
         value2 = GenerateRandomValue(type2);
 
-        upgradePanelController = GameManager.Instance.upgradePanelController;
-        if (upgradePanelController == null)
+        GameObject upgradePanelObject = GameManager.Instance.upgradePanelController;
+        if (upgradePanelObject != null)
         {
-            Debug.LogError("UpgradePanelController not found on the scene.");
+            upgradePanelController = upgradePanelObject.GetComponent<UpgradePanelController>();
+            if (upgradePanelController == null)
+            {
+                Debug.LogError("UpgradePanelController component not found on the object.");
+            }
+        }
+        else
+        {
+            Debug.LogError("UpgradePanelController GameObject not found in GameManager.");
         }
     }
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
-public class MapBounds : MonoBehaviour
+public class MapBoundsAndSpawn : MonoBehaviour
 {
     [Header("Map Settings")]
     public Vector2 minBounds;
@@ -12,14 +12,18 @@ public class MapBounds : MonoBehaviour
     [Header("Spawn Settings")]
     [SerializeField] private GameObject[] initialEnemyPrefabs;
     [SerializeField] private GameObject[] secondWaveEnemyPrefabs;
+    [SerializeField] private GameObject[] thirdWaveEnemyPrefabs;
+    [SerializeField] private GameObject[] fourthWaveEnemyPrefabs;
+    [SerializeField] private GameObject[] fifthWaveEnemyPrefabs;
+    [SerializeField] private GameObject[] sixthWaveEnemyPrefabs;
     [SerializeField] private GameObject[] itemPrefabs;
     [SerializeField] private Minimap minimap;
     [SerializeField] private float spawnInterval;
     [SerializeField] private int maxEnemies;
     [SerializeField] private int maxItems;
     [SerializeField] private float waveDuration;
-    [SerializeField] private float minimumDistanceBetweenItems = 2f;
-    [SerializeField] private float minimumDistanceOfEnemiesFromPlayer = 5f;
+    [SerializeField] private float minimumDistanceBetweenItems;
+    [SerializeField] private float minimumDistanceOfEnemiesFromPlayer;
 
     private int currentEnemies;
     private int currentItems;
@@ -41,16 +45,21 @@ public class MapBounds : MonoBehaviour
         GameObject[][] waves = new GameObject[][]
         {
             initialEnemyPrefabs,
-            secondWaveEnemyPrefabs
+            secondWaveEnemyPrefabs,
+            thirdWaveEnemyPrefabs,
+            fourthWaveEnemyPrefabs,
+            fifthWaveEnemyPrefabs,
+            sixthWaveEnemyPrefabs
         };
+
+        int waveCount = waves.Length;
+        int currentWaveIndex = 0;
 
         while (true)
         {
-            foreach (var wave in waves)
-            {
-                SpawnWave(wave);
-                yield return new WaitForSeconds(waveDuration);
-            }
+            SpawnWave(waves[currentWaveIndex]);
+            currentWaveIndex = (currentWaveIndex + 1) % waveCount;
+            yield return new WaitForSeconds(waveDuration);
         }
     }
 

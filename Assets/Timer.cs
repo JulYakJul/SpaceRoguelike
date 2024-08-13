@@ -7,6 +7,10 @@ public class Timer : MonoBehaviour
     public float startingTime = 30f;
     private float currentTime;
     [SerializeField] private TMP_Text timerText;
+    public GameObject upgradePanelController;
+    public GameObject totalUpgradePanelController;
+
+    private bool wasUpgradePanelActive;
 
     void Start()
     {
@@ -23,7 +27,35 @@ public class Timer : MonoBehaviour
             currentTime = startingTime;
         }
 
+        HandleUpgradePanelVisibility();
         UpdateTimerText();
+    }
+
+    void HandleUpgradePanelVisibility()
+    {
+        int seconds = Mathf.FloorToInt(currentTime % 60);
+
+        if (seconds == 0)
+        {
+            if (upgradePanelController.activeSelf)
+            {
+                wasUpgradePanelActive = true;
+                upgradePanelController.SetActive(false);
+            }
+
+            totalUpgradePanelController.SetActive(true);
+        }
+
+        if (seconds == 28)
+        {
+            if (wasUpgradePanelActive)
+            {
+                upgradePanelController.SetActive(true);
+                wasUpgradePanelActive = false;
+            }
+
+            totalUpgradePanelController.SetActive(false);
+        }
     }
 
     void UpdateTimerText()

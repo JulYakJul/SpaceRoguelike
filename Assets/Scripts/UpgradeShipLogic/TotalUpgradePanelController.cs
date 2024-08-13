@@ -11,6 +11,10 @@ public class TotalUpgradePanelController : MonoBehaviour
     [SerializeField] private Button[] upgradeButtons;
     [SerializeField] private TMP_Text[] buttonTexts;
 
+    [SerializeField] private Image imageButton1;
+    [SerializeField] private Image imageButton2;
+    [SerializeField] private Image imageButton3;
+
     [Header("Upgrades")]
     [SerializeField] private int upgradeHealthScale;
     [SerializeField] private int upgradeFireRate;
@@ -29,7 +33,7 @@ public class TotalUpgradePanelController : MonoBehaviour
     private const int MaxWeaponUpgrades = 2;
 
     private int detectionRadiusUpgradeCount = 0;
-    private const int MaxDetectionRadiusUpgrades = 5;
+    private const int MaxDetectionRadiusUpgrades = 3;
 
     private enum UpgradeType
     {
@@ -44,7 +48,6 @@ public class TotalUpgradePanelController : MonoBehaviour
     private void Start()
     {
         gameObject.SetActive(false);
-
         InitializeUpgradePanel();
     }
 
@@ -57,7 +60,7 @@ public class TotalUpgradePanelController : MonoBehaviour
             availableUpgrades.Remove(UpgradeType.Weapon);
         }
 
-        if (detectionRadiusUpgradeCount >= MaxDetectionRadiusUpgrades) 
+        if (detectionRadiusUpgradeCount >= MaxDetectionRadiusUpgrades)
         {
             availableUpgrades.Remove(UpgradeType.DetectionRadius);
         }
@@ -71,7 +74,7 @@ public class TotalUpgradePanelController : MonoBehaviour
                 UpgradeType upgradeType = availableUpgrades[i];
                 SetButtonAction(upgradeButtons[i], upgradeType);
                 SetButtonText(buttonTexts[i], upgradeType);
-                SetButtonSprite(upgradeButtons[i], upgradeType);
+                SetImageSpriteForButton(i, upgradeType);
                 upgradeButtons[i].gameObject.SetActive(true);
             }
             else
@@ -135,7 +138,7 @@ public class TotalUpgradePanelController : MonoBehaviour
                 buttonText.text = "Upgrade Weapon";
                 break;
             case UpgradeType.BulletType:
-                buttonText.text = "Upgrade Bullet Type";
+                buttonText.text = "Bullet speed upgrade";
                 break;
             case UpgradeType.Health:
                 buttonText.text = "Increase Health";
@@ -152,30 +155,48 @@ public class TotalUpgradePanelController : MonoBehaviour
         }
     }
 
-    private void SetButtonSprite(Button button, UpgradeType upgradeType)
+    private void SetImageSpriteForButton(int index, UpgradeType upgradeType)
     {
-        Image buttonImage = button.GetComponent<Image>();
+        Image targetImage = null;
 
+        switch (index)
+        {
+            case 0:
+                targetImage = imageButton1;
+                break;
+            case 1:
+                targetImage = imageButton2;
+                break;
+            case 2:
+                targetImage = imageButton3;
+                break;
+        }
+
+        if (targetImage == null) return;
+
+        Sprite spriteToSet = GetSpriteForUpgradeType(upgradeType);
+
+        targetImage.sprite = spriteToSet;
+    }
+
+    private Sprite GetSpriteForUpgradeType(UpgradeType upgradeType)
+    {
         switch (upgradeType)
         {
             case UpgradeType.Weapon:
-                buttonImage.sprite = weaponSprite;
-                break;
+                return weaponSprite;
             case UpgradeType.BulletType:
-                buttonImage.sprite = bulletTypeSprite;
-                break;
+                return bulletTypeSprite;
             case UpgradeType.Health:
-                buttonImage.sprite = healthSprite;
-                break;
+                return healthSprite;
             case UpgradeType.FireRate:
-                buttonImage.sprite = fireRateSprite;
-                break;
+                return fireRateSprite;
             case UpgradeType.DetectionRadius:
-                buttonImage.sprite = detectionRadiusSprite;
-                break;
+                return detectionRadiusSprite;
             case UpgradeType.StrengthScale:
-                buttonImage.sprite = strengthScaleSprite;
-                break;
+                return strengthScaleSprite;
+            default:
+                return null;
         }
     }
 
