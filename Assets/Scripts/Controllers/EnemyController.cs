@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
@@ -12,13 +13,20 @@ public class EnemyController : MonoBehaviour
     [Header("Health Settings")]
     [SerializeField] private int maxHealth;
     [SerializeField] private float maxTransparency;
+    public Image healthBar;
+    public Color fullHealthColor = Color.green;
+    public Color zeroHealthColor = Color.red;
+    private int currentHealth;
+
+    [Header("Upgrade Settings")]
+    [SerializeField] private GameObject[] upgradePrefabs;
+
 
     private Transform player;
-    private MapBounds mapBounds;
-    private int currentHealth;
+    private MapBoundsAndSpawn mapBounds;
     private SpriteRenderer spriteRenderer;
     private float shootingTimer;
-
+    
     private const float AngleOffset = -90f;
 
     void Start()
@@ -32,6 +40,8 @@ public class EnemyController : MonoBehaviour
         if (player == null) return;
 
         HandleMovementAndShooting();
+        UpdateHealthBar();
+        LockHealthBarRotation();
     }
 
     private void InitializeComponents()
@@ -42,13 +52,39 @@ public class EnemyController : MonoBehaviour
         {
             player = playerObject.transform;
         }
-        mapBounds = FindObjectOfType<MapBounds>();
+        mapBounds = FindObjectOfType<MapBoundsAndSpawn>();
     }
 
     private void InitializeSettings()
     {
         currentHealth = maxHealth;
         UpdateTransparency();
+    }
+
+    private void UpdateHealthBar()
+    {
+        if (healthBar != null)
+        {
+            healthBar.fillAmount = (float)currentHealth / maxHealth;  // Обновляем fillAmount
+            UpdateHealthBarColor();
+        }
+    }
+
+    private void UpdateHealthBarColor()
+    {
+        if (healthBar != null)
+        {
+            float healthPercentage = (float)currentHealth / maxHealth;
+            healthBar.color = Color.Lerp(zeroHealthColor, fullHealthColor, healthPercentage);
+        }
+    }
+
+    private void LockHealthBarRotation()
+    {
+        if (healthBar != null)
+        {
+            healthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
     }
 
     private void HandleMovementAndShooting()
@@ -110,10 +146,21 @@ public class EnemyController : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            DropUpgrade();
             Destroy(gameObject);
         }
         UpdateTransparency();
     }
+
+    private void DropUpgrade()
+    {
+        if (upgradePrefabs.Length > 0)
+        {
+            int randomIndex = Random.Range(0, upgradePrefabs.Length);
+            Instantiate(upgradePrefabs[randomIndex], transform.position, Quaternion.identity);
+        }
+    }
+
 
     private void UpdateTransparency()
     {
@@ -122,6 +169,8 @@ public class EnemyController : MonoBehaviour
         Color color = spriteRenderer.color;
         color.a = transparency;
         spriteRenderer.color = color;
+
+        UpdateHealthBarColor();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
