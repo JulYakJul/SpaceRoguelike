@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int maxStrength;
     public int currentStrength;
     private const float StrengthMultiplier = 3f;
+    [SerializeField] private int upgradeStrength;
 
     [Header("Combat Settings")]
     [SerializeField] private GameObject[] bulletPrefabs;
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
     public bool IsUpgradePanelActive { get; set; } = false;
     [SerializeField] private GameObject totalUpgradePanel;
     public GameObject TotalUpgradePanel => totalUpgradePanel;
+    [SerializeField] private float ShowPanelUpgradeTime;
 
     [Header("Cinemachine Settings")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
@@ -67,6 +69,15 @@ public class PlayerController : MonoBehaviour
 
     private int currentBulletIndex = 0;
     private GameObject bulletPrefab;
+
+    [Header("Invulnerability frame")]
+    private bool isInvulnerable = false;
+    [SerializeField] private float invulnerabilityTime = 3f;
+    [SerializeField] private float invulnerabilityTimer = 0f;
+    private Color originalColor;
+    [SerializeField] private float flashSpeed;
+    private bool isFlashing = false;
+    [SerializeField] private float opacityPlayer;
 
     void Start()
     {
@@ -88,6 +99,11 @@ public class PlayerController : MonoBehaviour
         RotateTowardsMovement();
         DetectAndShootEnemies();
         HandleMovementParticles();
+
+        if (isFlashing)
+        {
+            FlashPlayer();
+        }
     }
 
     void FixedUpdate()
@@ -101,6 +117,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
+        originalColor = spriteRenderer.color;
     }
 
     private void InitializePlayerSettings()
@@ -211,7 +228,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("BulletEnemy"))
+        if (collision.CompareTag("BulletEnemy") && !isInvulnerable)
         {
             Bullet bullet = collision.GetComponent<Bullet>();
             if (bullet != null)
@@ -224,6 +241,8 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isInvulnerable) return;
+
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);
         healthSlider.value = currentHealth;
 
@@ -239,17 +258,44 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        else
+        {
+            StartCoroutine(InvulnerabilityRoutine());
+        }
     }
 
     private void AdjustSpeedOnDamage()
     {
-        if (currentSpeed > 7)
+        if (currentSpeed > baseSpeed)
         {
             playerSpeed--;
-            currentSpeed = Mathf.Max(baseSpeed + (playerSpeed - 1), 7);
+            currentSpeed = Mathf.Max(baseSpeed + (playerSpeed - 1), baseSpeed);
             UpdateSpeedText();
             UpdateSpeedSlider();
         }
+    }
+
+    private IEnumerator InvulnerabilityRoutine()
+    {
+        isInvulnerable = true;
+        isFlashing = true;
+        invulnerabilityTimer = invulnerabilityTime;
+
+        while (invulnerabilityTimer > 0)
+        {
+            invulnerabilityTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        isFlashing = false;
+        isInvulnerable = false;
+        spriteRenderer.color = originalColor;
+    }
+
+    private void FlashPlayer()
+    {
+        float lerpFactor = Mathf.PingPong(Time.time * flashSpeed, 1f);
+        spriteRenderer.color = Color.Lerp(new Color(originalColor.r, originalColor.g, originalColor.b, opacityPlayer), originalColor, lerpFactor);
     }
 
     public void UpgradeStrength(int amount)
@@ -361,7 +407,7 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(30f);
+            yield return new WaitForSeconds(ShowPanelUpgradeTime);
             if (!IsUpgradePanelActive) 
             {
                 upgradePanel.SetActive(true);
@@ -461,7 +507,7 @@ public class PlayerController : MonoBehaviour
                     Bullet bulletScript = bullet.GetComponent<Bullet>();
                     if (bulletScript != null)
                     {
-                        bulletScript.damage = 10 + (currentStrength * 5);
+                        bulletScript.damage = 10 + (currentStrength * upgradeStrength);
                     }
                 }
             }
@@ -479,7 +525,7 @@ public class PlayerController : MonoBehaviour
             Bullet bulletScript = bulletPrefab.GetComponent<Bullet>();
             if (bulletScript != null)
             {
-                bulletScript.damage = 5 + (currentStrength * 5);
+                bulletScript.damage = upgradeStrength + (currentStrength * upgradeStrength);
             }
         }
         else
