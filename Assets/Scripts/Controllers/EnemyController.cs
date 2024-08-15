@@ -21,6 +21,10 @@ public class EnemyController : MonoBehaviour
     [Header("Upgrade Settings")]
     [SerializeField] private GameObject[] upgradePrefabs;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip shootSound; // Звук стрельбы
+    public AudioSource audioSource;
+
     private Transform player;
     private MapBoundsAndSpawn mapBounds;
     private SpriteRenderer spriteRenderer;
@@ -49,6 +53,7 @@ public class EnemyController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         mapBounds = FindObjectOfType<MapBoundsAndSpawn>();
+        audioSource = GetComponent<AudioSource>(); // Получаем компонент AudioSource
     }
 
     private void InitializeSettings()
@@ -164,6 +169,11 @@ public class EnemyController : MonoBehaviour
         foreach (Transform spawnPoint in bulletSpawnPoints)
         {
             Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
+        }
+
+        if (shootSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(shootSound); // Воспроизведение звука стрельбы
         }
     }
 
