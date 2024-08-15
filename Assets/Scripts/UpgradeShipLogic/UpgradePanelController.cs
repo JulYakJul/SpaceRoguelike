@@ -1,6 +1,10 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Tables;
+
 
 public class UpgradePanelController : MonoBehaviour
 {
@@ -54,9 +58,21 @@ public class UpgradePanelController : MonoBehaviour
     private void SetupOption(Image image, TMP_Text text, Button button, UpgradeType type, int value)
     {
         image.sprite = GetIconForUpgradeType(type);
-        text.text = $"+{value} {type}";
+
+        var stringTable = LocalizationSettings.StringDatabase.GetTable("LanguageSettings");
+
+        string localizedUpgradeType = type switch
+        {
+            UpgradeType.Health => stringTable["health"].GetLocalizedString(),
+            UpgradeType.Strength => stringTable["strength"].GetLocalizedString(),
+            UpgradeType.Speed => stringTable["speed"].GetLocalizedString(),
+            _ => type.ToString()
+        };
+
+        text.text = $"+{value} {localizedUpgradeType}";
         SetButtonBackgroundColor(button, type);
     }
+
 
     private Sprite GetIconForUpgradeType(UpgradeType type)
     {
@@ -92,20 +108,24 @@ public class UpgradePanelController : MonoBehaviour
     {
         string[] parts = upgradeText.Split(' ');
         int value = int.Parse(parts[0].Replace("+", ""));
-        if (System.Enum.TryParse(parts[1], out UpgradeType type))
+
+        var stringTable = LocalizationSettings.StringDatabase.GetTable("LanguageSettings");
+
+        if (parts.Length > 1)
         {
-            switch (type)
+            if (parts[1] == stringTable["health"].GetLocalizedString())
             {
-                case UpgradeType.Health:
-                    player.IncreaseHealth(value);
-                    break;
-                case UpgradeType.Strength:
-                    player.UpgradeStrength(value);
-                    break;
-                case UpgradeType.Speed:
-                    player.UpgradeSpeed(value);
-                    break;
+                player.IncreaseHealth(value);
+            }
+            else if (parts[1] == stringTable["strength"].GetLocalizedString())
+            {
+                player.UpgradeStrength(value);
+            }
+            else if (parts[1] == stringTable["speed"].GetLocalizedString())
+            {
+                player.UpgradeSpeed(value);
             }
         }
     }
+
 }

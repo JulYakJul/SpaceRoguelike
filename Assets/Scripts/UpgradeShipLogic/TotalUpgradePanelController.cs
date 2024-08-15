@@ -3,6 +3,9 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Tables;
 
 public class TotalUpgradePanelController : MonoBehaviour
 {
@@ -132,28 +135,31 @@ public class TotalUpgradePanelController : MonoBehaviour
 
     private void SetButtonText(TMP_Text buttonText, UpgradeType upgradeType)
     {
+        var stringTable = LocalizationSettings.StringDatabase.GetTable("LanguageSettings");
+
         switch (upgradeType)
         {
             case UpgradeType.Weapon:
-                buttonText.text = "Upgrade Weapon";
+                buttonText.text = stringTable["upg_weapon"].GetLocalizedString();
                 break;
             case UpgradeType.BulletType:
-                buttonText.text = "Bullet speed upgrade";
+                buttonText.text = stringTable["upg_bullet_speed"].GetLocalizedString();
                 break;
             case UpgradeType.Health:
-                buttonText.text = "Increase Health";
+                buttonText.text = stringTable["increase_health"].GetLocalizedString();
                 break;
             case UpgradeType.FireRate:
-                buttonText.text = "Upgrade Fire Rate";
+                buttonText.text = stringTable["upg_fire_rate"].GetLocalizedString();
                 break;
             case UpgradeType.DetectionRadius:
-                buttonText.text = "Upgrade Detection Radius";
+                buttonText.text = stringTable["upg_detection_radius"].GetLocalizedString();
                 break;
             case UpgradeType.StrengthScale:
-                buttonText.text = "Upgrade Strength Scale";
+                buttonText.text = stringTable["upg_strength_scale"].GetLocalizedString();
                 break;
         }
     }
+
 
     private void SetImageSpriteForButton(int index, UpgradeType upgradeType)
     {
