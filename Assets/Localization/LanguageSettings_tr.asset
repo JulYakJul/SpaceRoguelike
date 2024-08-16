@@ -78,6 +78,34 @@ MonoBehaviour:
     m_Localized: "Atesleme yar\u0131cap\u0131n\u0131 art\u0131r\u0131n"
     m_Metadata:
       m_Items: []
+  - m_Id: 51745900695552
+    m_Localized: Daha iyisini yapabilecegini biliyorsun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56048006696960
+    m_Localized: "Pes etme! Senin i\u0441inde t\u0433m umutlar\u0131 var!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56457924415488
+    m_Localized: Bu basit bir oyun degil...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57123958919168
+    m_Localized: Tum sirlar henuz aciklanmadi...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 378631126224896
+    m_Localized: Yeniden baslatmak icin R tusuna basin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396114166312960
+    m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 408086182129664
+    m_Localized: 'Sonraki yukseltme:'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

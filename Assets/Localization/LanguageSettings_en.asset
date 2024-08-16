@@ -78,6 +78,34 @@ MonoBehaviour:
     m_Localized: Upgrade Detection Radius
     m_Metadata:
       m_Items: []
+  - m_Id: 51745900695552
+    m_Localized: You know you can do better
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56048006696960
+    m_Localized: Don't give up! They have all hope in you!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56457924415488
+    m_Localized: This is not an easy game...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57123958919168
+    m_Localized: Not all the secrets have been revealed yet...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 378631126224896
+    m_Localized: Press R to restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396114166312960
+    m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 408086182129664
+    m_Localized: 'Next upgrade:'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

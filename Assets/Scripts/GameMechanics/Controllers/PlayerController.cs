@@ -51,6 +51,9 @@ public class PlayerController : MonoBehaviour
     public GameObject TotalUpgradePanel => totalUpgradePanel;
     [SerializeField] private float ShowPanelUpgradeTime;
 
+    [Header("UI Panels")]
+    public GameObject gameOverPanel;
+
     [Header("Cinemachine Settings")]
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private float cameraZoomSpeed;
@@ -61,6 +64,7 @@ public class PlayerController : MonoBehaviour
     [Header("Audio Settings")]
     [SerializeField] private AudioClip hitSound;
     private AudioSource audioSource;
+    public AudioSource gameOverMusic;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -256,6 +260,8 @@ public class PlayerController : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            gameOverPanel.SetActive(true);
+            gameOverMusic.Play();
             Destroy(gameObject);
         }
         else

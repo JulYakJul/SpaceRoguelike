@@ -15,20 +15,30 @@ public class UpgradeItem : MonoBehaviour
         value1 = GenerateRandomValue(type1);
         value2 = GenerateRandomValue(type2);
 
-        GameObject upgradePanelObject = GameManager.Instance.upgradePanelController;
-        if (upgradePanelObject != null)
+        if (GameManager.Instance.upgradePanelController == null)
         {
-            upgradePanelController = upgradePanelObject.GetComponent<UpgradePanelController>();
+            upgradePanelController = FindObjectOfType<UpgradePanelController>();
+            
+            if (upgradePanelController != null)
+            {
+                GameManager.Instance.upgradePanelController = upgradePanelController.gameObject;
+            }
+            else
+            {
+                Debug.LogError("UpgradePanelController GameObject not found in the scene.");
+            }
+        }
+        else
+        {
+            upgradePanelController = GameManager.Instance.upgradePanelController.GetComponent<UpgradePanelController>();
+            
             if (upgradePanelController == null)
             {
                 Debug.LogError("UpgradePanelController component not found on the object.");
             }
         }
-        else
-        {
-            Debug.LogError("UpgradePanelController GameObject not found in GameManager.");
-        }
     }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {

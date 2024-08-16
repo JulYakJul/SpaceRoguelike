@@ -75,6 +75,34 @@ MonoBehaviour:
     m_Key: upg_detection_radius
     m_Metadata:
       m_Items: []
+  - m_Id: 51745900695552
+    m_Key: game_over_phrase_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56048006696960
+    m_Key: game_over_phrase_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 56457924415488
+    m_Key: game_over_phrase_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 57123958919168
+    m_Key: game_over_phrase_4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 378631126224896
+    m_Key: restart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 396114166312960
+    m_Key: menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 408086182129664
+    m_Key: nextupgrade
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
