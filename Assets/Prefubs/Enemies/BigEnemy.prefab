@@ -165,6 +165,7 @@ MonoBehaviour:
   - {fileID: 2407435587518089108}
   - {fileID: 1003815421895378914}
   visionRadius: 20
+  scorePlayer: 0
   maxHealth: 500
   maxTransparency: 0.8
   healthBar: {fileID: 5668217167915290745}
