@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform[] bulletSpawnPoints;
     [SerializeField] private float visionRadius;
+    [SerializeField] private int scorePlayer;
 
     [Header("Health Settings")]
     [SerializeField] private int maxHealth;
@@ -22,13 +23,14 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject[] upgradePrefabs;
 
     [Header("Audio Settings")]
-    [SerializeField] private AudioClip shootSound; // Звук стрельбы
+    [SerializeField] private AudioClip shootSound;
     public AudioSource audioSource;
 
     private Transform player;
     private MapBoundsAndSpawn mapBounds;
     private SpriteRenderer spriteRenderer;
     private float shootingTimer;
+    private GameManager gameManager;
 
     private const float AngleOffset = -90f;
     private bool movingRight = true;
@@ -37,6 +39,12 @@ public class EnemyController : MonoBehaviour
     {
         InitializeComponents();
         InitializeSettings();
+
+        gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found on the scene.");
+        }
     }
 
     void Update()
@@ -53,7 +61,7 @@ public class EnemyController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         mapBounds = FindObjectOfType<MapBoundsAndSpawn>();
-        audioSource = GetComponent<AudioSource>(); // Получаем компонент AudioSource
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void InitializeSettings()
@@ -173,7 +181,7 @@ public class EnemyController : MonoBehaviour
 
         if (shootSound != null && audioSource != null)
         {
-            audioSource.PlayOneShot(shootSound); // Воспроизведение звука стрельбы
+            audioSource.PlayOneShot(shootSound);
         }
     }
 
@@ -183,6 +191,7 @@ public class EnemyController : MonoBehaviour
         if (currentHealth <= 0)
         {
             DropUpgrade();
+            gameManager.AddCoin();
             Destroy(gameObject);
         }
         UpdateTransparency();

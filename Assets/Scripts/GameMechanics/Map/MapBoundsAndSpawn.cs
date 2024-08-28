@@ -20,7 +20,7 @@ public class MapBoundsAndSpawn : MonoBehaviour
     [SerializeField] private Minimap minimap;
     [SerializeField] private float spawnInterval;
     [SerializeField] private int maxEnemies;
-    [SerializeField] private int maxItems;
+    // [SerializeField] private int maxItems;
     [SerializeField] private float waveDuration;
     [SerializeField] private float minimumDistanceBetweenItems;
     [SerializeField] private float minimumDistanceOfEnemiesFromPlayer;
@@ -73,10 +73,10 @@ public class MapBoundsAndSpawn : MonoBehaviour
 
         currentItems = 0;
 
-        for (int i = 0; i < maxItems; i++)
-        {
-            SpawnItem();
-        }
+        // for (int i = 0; i < maxItems; i++)
+        // {
+        //     SpawnItem();
+        // }
     }
 
     private void SpawnEnemy(GameObject[] enemyPrefabs)
@@ -102,34 +102,34 @@ public class MapBoundsAndSpawn : MonoBehaviour
         currentEnemies++;
     }
 
-    private void SpawnItem()
-    {
-        Vector2 spawnPosition = GetRandomPositionWithinBounds();
-        int randomIndex = GetWeightedRandomIndex(itemWeights);
+    // private void SpawnItem()
+    // {
+    //     Vector2 spawnPosition = GetRandomPositionWithinBounds();
+    //     int randomIndex = GetWeightedRandomIndex(itemWeights);
         
-        if (hasReachedMaxSpeed && (randomIndex == 1 || randomIndex == 2))
-        {
-            return;
-        }
+    //     if (hasReachedMaxSpeed && (randomIndex == 1 || randomIndex == 2))
+    //     {
+    //         return;
+    //     }
 
-        int maxAttempts = 10;
-        int attempts = 0;
-        while (attempts < maxAttempts && !IsPositionValid(spawnPosition))
-        {
-            spawnPosition = GetRandomPositionWithinBounds();
-            attempts++;
-        }
+    //     int maxAttempts = 10;
+    //     int attempts = 0;
+    //     while (attempts < maxAttempts && !IsPositionValid(spawnPosition))
+    //     {
+    //         spawnPosition = GetRandomPositionWithinBounds();
+    //         attempts++;
+    //     }
 
-        if (!IsPositionValid(spawnPosition))
-        {
-            return;
-        }
+    //     if (!IsPositionValid(spawnPosition))
+    //     {
+    //         return;
+    //     }
 
-        GameObject item = Instantiate(itemPrefabs[randomIndex], spawnPosition, Quaternion.identity);
-        minimap.AddObject(item, randomIndex);
-        spawnedItems.Add(item);
-        currentItems++;
-    }
+    //     GameObject item = Instantiate(itemPrefabs[randomIndex], spawnPosition, Quaternion.identity);
+    //     minimap.AddObject(item, randomIndex);
+    //     spawnedItems.Add(item);
+    //     currentItems++;
+    // }
 
     private bool IsPositionValid(Vector2 position)
     {

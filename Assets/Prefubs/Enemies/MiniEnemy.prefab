@@ -156,6 +156,7 @@ MonoBehaviour:
   bulletSpawnPoints:
   - {fileID: 560270328598871231}
   visionRadius: 20
+  scorePlayer: 0
   maxHealth: 50
   maxTransparency: 0.8
   healthBar: {fileID: 8701526268284006222}
