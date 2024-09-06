@@ -185,7 +185,7 @@ MonoBehaviour:
   - {fileID: 6422446912500690239, guid: 40011299bf833af4391af5bf99023099, type: 3}
   - {fileID: 8817551398461422067, guid: 0a7f6e161ed0d5b4ab228e16d7cd7e0c, type: 3}
   - {fileID: 641612472804447312, guid: 061e7337aa751cf40baa838bca886485, type: 3}
-  shootSound: {fileID: 8300000, guid: e6177368fcd8f9a40b3a43b1454fff18, type: 3}
+  shootSound: {fileID: 8300000, guid: 0063222e74c8a50449a0a54db49de7b1, type: 3}
   audioSource: {fileID: 6937428721825410937, guid: 556a448f74d9ad04981f7203f571f67e, type: 3}
 --- !u!82 &-8365610151037566257
 AudioSource:
@@ -197,10 +197,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e6177368fcd8f9a40b3a43b1454fff18, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 0063222e74c8a50449a0a54db49de7b1, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
+  m_Volume: 0.1
+  m_Pitch: 3
   Loop: 0
   Mute: 0
   Spatialize: 0

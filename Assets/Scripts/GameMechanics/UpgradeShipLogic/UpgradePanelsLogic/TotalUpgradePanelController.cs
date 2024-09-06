@@ -222,7 +222,7 @@ public class TotalUpgradePanelController : MonoBehaviour
         upgradeAction?.Invoke();
         if (playerController.IsUpgradePanelActive)
         {
-            playerController.UpgradePanel.SetActive(false);
+            playerController.totalUpgradePanel.SetActive(false);
             Time.timeScale = 1f;
             playerController.IsUpgradePanelActive = false;
         }

@@ -17,7 +17,6 @@ public class MapBoundsAndSpawn : MonoBehaviour
     [SerializeField] private GameObject[] fifthWaveEnemyPrefabs;
     [SerializeField] private GameObject[] sixthWaveEnemyPrefabs;
     [SerializeField] private GameObject[] itemPrefabs;
-    [SerializeField] private Minimap minimap;
     [SerializeField] private float spawnInterval;
     [SerializeField] private int maxEnemies;
     // [SerializeField] private int maxItems;
@@ -98,7 +97,6 @@ public class MapBoundsAndSpawn : MonoBehaviour
 
         int randomIndex = Random.Range(0, enemyPrefabs.Length);
         GameObject enemy = Instantiate(enemyPrefabs[randomIndex], spawnPosition, Quaternion.identity);
-        minimap.AddEnemy(enemy);
         currentEnemies++;
     }
 

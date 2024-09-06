@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using Cinemachine;
+using YG;
 
 public class PlayerController : MonoBehaviour
 {
@@ -43,12 +44,12 @@ public class PlayerController : MonoBehaviour
     [Header("Map Settings")]
     [SerializeField] private MapBoundsAndSpawn mapBounds;
 
+    // [SerializeField] private GameObject upgradePanel;
+    // public GameObject UpgradePanel => upgradePanel;
     [Header("Upgrade Panels")]
-    [SerializeField] private GameObject upgradePanel;
-    public GameObject UpgradePanel => upgradePanel;
+    public GameObject totalUpgradePanel;
     public bool IsUpgradePanelActive { get; set; } = false;
-    [SerializeField] private GameObject totalUpgradePanel;
-    public GameObject TotalUpgradePanel => totalUpgradePanel;
+    // public GameObject TotalUpgradePanel => totalUpgradePanel;
     [SerializeField] private float ShowPanelUpgradeTime;
 
     [Header("UI Panels")]
@@ -170,7 +171,7 @@ public class PlayerController : MonoBehaviour
     private void OnUpgradeSelected(System.Action upgradeAction)
     {
         upgradeAction?.Invoke();
-        upgradePanel.SetActive(false);
+        totalUpgradePanel.SetActive(false);
         Time.timeScale = 1f;
         IsUpgradePanelActive = false;
     }
@@ -416,10 +417,10 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(ShowPanelUpgradeTime);
             if (!IsUpgradePanelActive) 
             {
-                upgradePanel.SetActive(true);
+                totalUpgradePanel.SetActive(true);
                 Time.timeScale = 0f;
                 IsUpgradePanelActive = true;
-                yield return new WaitUntil(() => !upgradePanel.activeSelf);
+                yield return new WaitUntil(() => !totalUpgradePanel.activeSelf);
                 Time.timeScale = 1f;
                 IsUpgradePanelActive = false;
             }

@@ -20,6 +20,10 @@ namespace YG
 
         public int score;
 
+        public int[] boughtSkins;
+
+        public int currentSkinIndex;
+
         // ...
 
         // Поля (сохранения) можно удалять и создавать новые. При обновлении игры сохранения ломаться не должны

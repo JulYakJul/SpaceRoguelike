@@ -110,6 +110,10 @@ MonoBehaviour:
     m_Localized: "\u0421ilt"
     m_Metadata:
       m_Items: []
+  - m_Id: 6538963651948544
+    m_Localized: Almak
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

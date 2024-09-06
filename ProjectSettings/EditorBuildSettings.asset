@@ -9,8 +9,13 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: 6ec61b879e190ed4ea3ad0178fc8edd6
   - enabled: 1
+    path: Assets/Scenes/SkinStore.unity
+    guid: 77490662ee3221e46a22e85eb54f930d
+  - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: b5cacb16d3d56354a9b8fa6f829de3d7, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 9b7978ce7cd47dd438ef7f8f3d79486b, type: 2}
     com.unity.addressableassets: {fileID: 11400000, guid: ffe18daa19b6bf6488ec8666190e9368, type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 21cfe57a6a01923469db0ee9329ee1a5, type: 2}

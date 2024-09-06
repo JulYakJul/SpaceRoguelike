@@ -1,5 +1,5 @@
 {
-    "idSave": 58,
+    "idSave": 5211,
     "isFirstSession": false,
     "language": "ru",
     "promptDone": false,
@@ -10,5 +10,15 @@
         true,
         false
     ],
-    "score": 58
+    "score": 146,
+    "boughtSkins": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1
+    ],
+    "currentSkinIndex": 6
 }
